@@ -1,0 +1,389 @@
+ 
+<!DOCTYPE html>
+<html lang="en" data-theme="system">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unix Timestamp Converter – Convert Unix Time to Date</title>
+  <meta name="description" content="Free privacy-friendly Unix timestamp converter. Convert seconds and milliseconds to dates, convert dates to Unix timestamps, and analyze expiration timestamps in URLs.">
+  <meta name="theme-color" content="#2563eb">
+
+  <!-- Open Graph / Social -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Unix Timestamp Converter">
+  <meta property="og:description" content="Convert Unix timestamps, dates, and analyze expiration URLs instantly in your browser.">
+
+  <!-- Favicon & PWA -->
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.json">
+
+  <!-- CSS Style -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Accessible Skip Link -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand">
+        <svg class="brand-icon" viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        <div>
+          <h1>Unix Timestamp Converter</h1>
+          <p class="subtitle">Convert timestamps, dates, and URL expiration parameters instantly</p>
+        </div>
+      </div>
+
+      <div class="theme-picker-wrapper">
+        <label for="themeSelect" class="sr-only">Select Theme</label>
+        <select id="themeSelect" class="theme-select" aria-label="Theme mode selector">
+          <option value="system">💻 System</option>
+          <option value="light">☀️ Light</option>
+          <option value="dark">🌙 Dark</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <main id="main-content" class="main-container">
+
+    <!-- Privacy Banner -->
+    <aside class="privacy-banner" aria-label="Privacy information">
+      <svg class="icon-shield" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+      </svg>
+      <span><strong>Privacy First:</strong> All conversions and URL analyses are performed purely client-side in your browser. No data is ever transmitted to any server.</span>
+    </aside>
+
+    <!-- Live Current Timestamp Card -->
+    <section class="card live-card" aria-labelledby="live-heading">
+      <div class="card-header">
+        <h2 id="live-heading">Current Unix Timestamp</h2>
+        <span class="live-indicator"><span class="pulse-dot"></span> Real-time</span>
+      </div>
+      <div class="live-grid">
+        <div class="live-item">
+          <span class="live-label">Seconds</span>
+          <div class="live-value-row">
+            <span id="liveSeconds" class="mono-font live-value">0</span>
+            <button class="btn btn-sm btn-secondary copy-btn" data-target="liveSeconds" aria-label="Copy current seconds timestamp">Copy</button>
+          </div>
+        </div>
+        <div class="live-item">
+          <span class="live-label">Milliseconds</span>
+          <div class="live-value-row">
+            <span id="liveMilliseconds" class="mono-font live-value">0</span>
+            <button class="btn btn-sm btn-secondary copy-btn" data-target="liveMilliseconds" aria-label="Copy current milliseconds timestamp">Copy</button>
+          </div>
+        </div>
+      </div>
+      <div class="live-formatted-row">
+        <span>Current UTC Time:</span>
+        <strong id="liveUtcFormatted" class="mono-font">--</strong>
+      </div>
+    </section>
+
+    <!-- Main Grid: Timestamp -> Date & Date -> Timestamp -->
+    <div class="main-grid">
+
+      <!-- Section A: Timestamp -> Date -->
+      <section class="card" aria-labelledby="ts-to-date-heading">
+        <h2 id="ts-to-date-heading">Timestamp → Date</h2>
+        <form id="tsToDateForm" onsubmit="return false;">
+          <div class="form-group">
+            <label for="tsInput">Enter Unix Timestamp</label>
+            <div class="input-with-controls">
+              <input type="text" id="tsInput" class="form-control mono-font" placeholder="e.g. 1786558070492" autocomplete="off" spellcheck="false">
+            </div>
+          </div>
+
+          <div class="form-row flex-wrap">
+            <div class="form-group flex-grow">
+              <label for="unitSelect">Unit Detection Mode</label>
+              <select id="unitSelect" class="form-control">
+                <option value="auto">Auto-Detect (Seconds/MS)</option>
+                <option value="seconds">Seconds (10 digits)</option>
+                <option value="milliseconds">Milliseconds (13 digits)</option>
+              </select>
+            </div>
+            <div class="form-group flex-grow">
+              <label for="targetTimezoneSelect">Display Timezone</label>
+              <select id="targetTimezoneSelect" class="form-control">
+                <option value="LOCAL">Local Browser Timezone</option>
+                <option value="UTC">UTC (Coordinated Universal Time)</option>
+                <option value="Asia/Kolkata">Asia/Kolkata (IST)</option>
+                <option value="Asia/Dubai">Asia/Dubai (GST)</option>
+                <option value="Asia/Singapore">Asia/Singapore (SGT)</option>
+                <option value="Asia/Tokyo">Asia/Tokyo (JST)</option>
+                <option value="Europe/London">Europe/London (GMT/BST)</option>
+                <option value="Europe/Berlin">Europe/Berlin (CET/CEST)</option>
+                <option value="America/New_York">America/New_York (EST/EDT)</option>
+                <option value="America/Chicago">America/Chicago (CST/CDT)</option>
+                <option value="America/Denver">America/Denver (MST/MDT)</option>
+                <option value="America/Los_Angeles">America/Los_Angeles (PST/PDT)</option>
+                <option value="Australia/Sydney">Australia/Sydney (AEST/AEDT)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="btn-group">
+            <button type="button" id="convertTsBtn" class="btn btn-primary">Convert</button>
+            <button type="button" id="useCurrentTsBtn" class="btn btn-secondary">Use Current</button>
+            <button type="button" id="clearTsBtn" class="btn btn-ghost">Clear</button>
+          </div>
+        </form>
+
+        <div id="tsError" class="alert alert-error hidden" role="alert"></div>
+        <div id="tsWarning" class="alert alert-warning hidden" role="status"></div>
+
+        <div id="tsResults" class="results-box hidden">
+          <div class="results-header">
+            <h3>Conversion Results</h3>
+            <button id="shareTsBtn" class="btn btn-sm btn-ghost" title="Share result">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+              Share
+            </button>
+          </div>
+
+          <div class="result-list">
+            <div class="result-row">
+              <span class="result-label">Original Input</span>
+              <div class="result-value-group">
+                <span id="resOriginal" class="mono-font">--</span>
+                <button class="btn btn-xs btn-ghost copy-btn" data-target="resOriginal">Copy</button>
+              </div>
+            </div>
+
+            <div class="result-row">
+              <span class="result-label">Detected Unit</span>
+              <span id="resDetectedUnit" class="badge badge-info">--</span>
+            </div>
+
+            <div class="result-row">
+              <span class="result-label">UTC Date & Time</span>
+              <div class="result-value-group">
+                <span id="resUtcDate" class="mono-font">--</span>
+                <button class="btn btn-xs btn-ghost copy-btn" data-target="resUtcDate">Copy</button>
+              </div>
+            </div>
+
+            <div class="result-row">
+              <span class="result-label">Selected Timezone</span>
+              <div class="result-value-group">
+                <span id="resLocalDate" class="mono-font">--</span>
+                <button class="btn btn-xs btn-ghost copy-btn" data-target="resLocalDate">Copy</button>
+              </div>
+            </div>
+
+            <div class="result-row">
+              <span class="result-label">ISO 8601</span>
+              <div class="result-value-group">
+                <span id="resIsoDate" class="mono-font">--</span>
+                <button class="btn btn-xs btn-ghost copy-btn" data-target="resIsoDate">Copy</button>
+              </div>
+            </div>
+
+            <div class="result-row">
+              <span class="result-label">Unix Seconds</span>
+              <div class="result-value-group">
+                <span id="resSeconds" class="mono-font">--</span>
+                <button class="btn btn-xs btn-ghost copy-btn" data-target="resSeconds">Copy</button>
+              </div>
+            </div>
+
+            <div class="result-row">
+              <span class="result-label">Unix Milliseconds</span>
+              <div class="result-value-group">
+                <span id="resMilliseconds" class="mono-font">--</span>
+                <button class="btn btn-xs btn-ghost copy-btn" data-target="resMilliseconds">Copy</button>
+              </div>
+            </div>
+
+            <div class="result-row">
+              <span class="result-label">Relative Time</span>
+              <span id="resRelativeTime" class="bold-text">--</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section B: Date -> Timestamp -->
+      <section class="card" aria-labelledby="date-to-ts-heading">
+        <h2 id="date-to-ts-heading">Date → Timestamp</h2>
+        <form id="dateToTsForm" onsubmit="return false;">
+          <div class="form-row">
+            <div class="form-group flex-grow">
+              <label for="datePickerInput">Date</label>
+              <input type="date" id="datePickerInput" class="form-control">
+            </div>
+            <div class="form-group flex-grow">
+              <label for="timePickerInput">Time</label>
+              <input type="time" id="timePickerInput" step="1" class="form-control">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="datePickerTzSelect">Timezone</label>
+            <select id="datePickerTzSelect" class="form-control">
+              <option value="LOCAL">Local Browser Timezone</option>
+              <option value="UTC">UTC (Coordinated Universal Time)</option>
+              <option value="Asia/Kolkata">Asia/Kolkata (IST)</option>
+              <option value="Asia/Dubai">Asia/Dubai (GST)</option>
+              <option value="Asia/Singapore">Asia/Singapore (SGT)</option>
+              <option value="Asia/Tokyo">Asia/Tokyo (JST)</option>
+              <option value="Europe/London">Europe/London (GMT/BST)</option>
+              <option value="Europe/Berlin">Europe/Berlin (CET/CEST)</option>
+              <option value="America/New_York">America/New_York (EST/EDT)</option>
+              <option value="America/Chicago">America/Chicago (CST/CDT)</option>
+              <option value="America/Denver">America/Denver (MST/MDT)</option>
+              <option value="America/Los_Angeles">America/Los_Angeles (PST/PDT)</option>
+              <option value="Australia/Sydney">Australia/Sydney (AEST/AEDT)</option>
+            </select>
+          </div>
+
+          <div class="btn-group">
+            <button type="button" id="setCurrentDateBtn" class="btn btn-secondary">Set Current Date/Time</button>
+          </div>
+        </form>
+
+        <div id="dateToTsResults" class="results-box">
+          <h3>Calculated Timestamps</h3>
+          <div class="result-list">
+            <div class="result-row">
+              <span class="result-label">Unix Seconds</span>
+              <div class="result-value-group">
+                <span id="dateResSeconds" class="mono-font bold-text">--</span>
+                <button class="btn btn-xs btn-ghost copy-btn" data-target="dateResSeconds">Copy</button>
+              </div>
+            </div>
+            <div class="result-row">
+              <span class="result-label">Unix Milliseconds</span>
+              <div class="result-value-group">
+                <span id="dateResMilliseconds" class="mono-font bold-text">--</span>
+                <button class="btn btn-xs btn-ghost copy-btn" data-target="dateResMilliseconds">Copy</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Section C: URL Timestamp Extractor -->
+    <section class="card url-card" aria-labelledby="url-heading">
+      <div class="card-header">
+        <h2 id="url-heading">URL Timestamp Extractor & Expiration Analyzer</h2>
+        <span class="badge badge-primary">Client-Side Analysis</span>
+      </div>
+      <p class="section-desc">Paste a URL containing token expiration parameters (e.g., <code>?expires=1786558070492</code> or <code>?ts=1755034670</code>) to extract and monitor expiration status in real time.</p>
+
+      <form id="urlForm" onsubmit="return false;">
+        <div class="form-group">
+          <label for="urlInput">Enter or Paste Full URL</label>
+          <div class="url-input-wrapper">
+            <input type="text" id="urlInput" class="form-control mono-font" placeholder="https://example.com/api/v1/download?expires=1786558070492&srcIp=152.58.185.222" spellcheck="false">
+            <button type="button" id="analyzeUrlBtn" class="btn btn-primary">Analyze URL</button>
+          </div>
+        </div>
+      </form>
+
+      <div id="urlError" class="alert alert-error hidden" role="alert"></div>
+
+      <div id="urlResults" class="hidden">
+        
+        <!-- Detected Primary Expiration Parameter Summary -->
+        <div class="analysis-summary-box">
+          <div class="summary-top-bar">
+            <div>
+              <span class="summary-label">Detected Timestamp Parameter</span>
+              <h3 id="urlParamName" class="mono-font">expires</h3>
+            </div>
+            <div id="urlStatusBadge" class="status-badge status-active">
+              <span class="status-icon">✓</span> <span id="urlStatusText">ACTIVE</span>
+            </div>
+          </div>
+
+          <div class="summary-details-grid">
+            <div>
+              <span class="detail-label">Raw Value</span>
+              <div class="result-value-group">
+                <span id="urlParamValue" class="mono-font">--</span>
+                <button class="btn btn-xs btn-ghost copy-btn" data-target="urlParamValue">Copy</button>
+              </div>
+            </div>
+            <div>
+              <span class="detail-label">Detected Unit</span>
+              <span id="urlParamUnit" class="badge badge-info">--</span>
+            </div>
+            <div>
+              <span class="detail-label">Expiration Date (Local)</span>
+              <span id="urlExpirationDate" class="mono-font">--</span>
+            </div>
+            <div>
+              <span class="detail-label">Expiration / Remaining Time</span>
+              <span id="urlCountdown" class="bold-text mono-font">--</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- All Parameters Breakdown Table -->
+        <div class="table-container">
+          <h3 class="table-title">Extracted URL Query Parameters</h3>
+          <table class="param-table">
+            <thead>
+              <tr>
+                <th scope="col">Parameter</th>
+                <th scope="col">Value</th>
+                <th scope="col">Inferred Type</th>
+              </tr>
+            </thead>
+            <tbody id="urlParamTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Section E: Educational About / Reference -->
+    <section class="card about-card" aria-labelledby="about-heading">
+      <h2 id="about-heading">What is a Unix Timestamp?</h2>
+      <div class="about-content">
+        <p>
+          A <strong>Unix timestamp</strong> (also known as POSIX time or Epoch time) represents the number of seconds that have elapsed since <strong>January 1, 1970 00:00:00 UTC</strong> (the Unix Epoch), excluding leap seconds.
+        </p>
+        
+        <div class="info-grid">
+          <div class="info-box">
+            <h3>Seconds vs. Milliseconds</h3>
+            <p><strong>Seconds (10 digits):</strong> Traditional standard used by Unix, Linux, PHP, Python, and C. Example: <code>1786558070</code>.</p>
+            <p><strong>Milliseconds (13 digits):</strong> Standard unit used natively in JavaScript (<code>Date.now()</code>), Java, and modern web APIs. Example: <code>1786558070492</code>.</p>
+          </div>
+
+          <div class="info-box">
+            <h3>Key Milestone Dates</h3>
+            <ul class="milestones-list">
+              <li><code>0</code> — January 1, 1970 00:00:00 UTC (The Epoch)</li>
+              <li><code>1000000000</code> — September 9, 2001 01:46:40 UTC</li>
+              <li><code>2147483647</code> — January 19, 2038 (32-bit Integer Overflow / Y2K38)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="app-footer">
+    <p>Unix Timestamp Converter &bull; Privacy-Friendly Client-Side Tool</p>
+  </footer>
+
+  <!-- App Script -->
+  <script src="app.js"></script>
+</body>
+</html>
