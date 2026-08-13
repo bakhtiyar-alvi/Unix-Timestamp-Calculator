@@ -1,5 +1,5 @@
  
-const CACHE_NAME = 'unix-timestamp-v1';
+const CACHE_NAME = 'unix-timestamp-v2';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
